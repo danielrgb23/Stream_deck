@@ -5,6 +5,12 @@
 desktop-app/.venv/
 __pycache__/
 *.pyc
+.pytest_cache/
+
+# Artefatos de empacotamento do PyInstaller (gerar via `pyinstaller`, ver README.md)
+desktop-app/build/
+desktop-app/dist/
+desktop-app/*.spec
 
 # Repositorios de referencia (Sparkpad-Arduino, MacroTouch) — clonados como
 # material de leitura, nunca fazem parte deste repositorio (ver README.md).

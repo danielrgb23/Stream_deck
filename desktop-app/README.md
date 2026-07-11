@@ -19,6 +19,16 @@ pip install -r requirements.txt
 python3 -m xeeta_streamer_app.app
 ```
 
+Pra gerar um executável/instalador de verdade (PyInstaller) em vez de rodar do código-fonte, ver a seção
+"App desktop — gerar executável/instalador" no README raiz do repositório.
+
+## Testes
+
+```bash
+pip install -r requirements-dev.txt
+pytest
+```
+
 ## Estrutura
 
 ```

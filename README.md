@@ -79,6 +79,28 @@ O modelo é selecionado exclusivamente pela flag de build `DEVICE_MODEL` (`ESSEN
 `CREATOR_PRO`, ver `src/core/DeviceModel.h`) — nunca por código-fonte duplicado. Cada `env` do
 `platformio.ini` usa `build_src_filter` para incluir apenas o `models/<modelo>/` correspondente.
 
+### Flash para o hardware
+
+```bash
+# 1. Descobrir a porta serial do device conectado
+pio device list
+
+# 2. Compilar e gravar no modelo/porta corretos (ajuste -e e --upload-port)
+pio run -e essential -t upload --upload-port /dev/cu.usbserial-XXXX     # Mac/Linux
+pio run -e essential -t upload --upload-port COM3                       # Windows
+
+# 3. (opcional) Acompanhar o boot/log via monitor serial
+pio device monitor -p /dev/cu.usbserial-XXXX -b 115200
+```
+
+`upload_speed = 115200` já está fixado em `platformio.ini` (seção `[env]`, vale pros três modelos) —
+adaptadores CH340 (comuns em clones de ESP32 WROOM-32) costumam falhar no `upload_speed` padrão do
+esptool (921600). Se o flash falhar de forma inconsistente mesmo assim (ponto de falha diferente a cada
+tentativa, mas escritas pequenas como bootloader/partition table sempre OK), o suspeito mais provável é
+o cabo/hub USB, não a velocidade — **conecte o device direto numa porta USB do computador, sem hub/dock
+no meio**; foi exatamente isso que causou esse sintoma durante o desenvolvimento (ver
+`docs/serial-protocol-manual-test.md`).
+
 ### Versionamento semântico
 
 O firmware segue `MAJOR.MINOR.PATCH` (`src/core/Version.h`):
@@ -197,3 +219,53 @@ o combo de volume é só mais um valor de `KeyEvent` emitido via `HidTransport`,
 Da mesma forma, cada tecla física tem um combo reservado próprio (`Ctrl+Alt+Shift+F13..F20`) usado só
 quando o app desktop configura aquela tecla como "abrir app" — ver `desktop-app/README.md` para o
 mecanismo completo (app residente + `pynput` + `pycaw`/`osascript`).
+
+## App desktop — rodar em modo dev
+
+```bash
+cd desktop-app
+python3 -m venv .venv
+source .venv/bin/activate       # Windows: .venv\Scripts\activate
+pip install -r requirements.txt
+python3 -m xeeta_streamer_app.app
+```
+
+Isso roda direto do código-fonte (sem empacotar nada) — útil pra desenvolvimento, já que qualquer
+mudança em `xeeta_streamer_app/*.py` aparece na próxima vez que você rodar o comando, sem rebuild. No
+Mac, a primeira vez que o listener de atalho global (`pynput`) tentar rodar, o macOS provavelmente vai
+pedir permissão de Acessibilidade para o processo Python — sem isso, os combos reservados de "abrir
+app"/"volume" não disparam (o resto do app funciona normalmente).
+
+## App desktop — gerar executável/instalador
+
+Empacotado com [PyInstaller](https://pyinstaller.org/) — testado neste repositório e confirmado
+funcionando (build real no Mac, `.app` executado com sucesso). **Precisa rodar em cada sistema
+operacional alvo** (o PyInstaller não faz cross-compile: gerar o `.exe` do Windows exige rodar isto
+numa máquina Windows, gerar o `.app` do Mac exige rodar num Mac):
+
+```bash
+cd desktop-app
+source .venv/bin/activate       # mesmo venv de desenvolvimento (requirements.txt já instalado)
+pip install pyinstaller
+pyinstaller --name XeetaStreamer --windowed --noconfirm run.py
+```
+
+- **Mac**: gera `dist/XeetaStreamer.app` — um bundle `.app` de verdade, aparece na bandeja do sistema
+  como qualquer outro app; pode ser aberto com `open dist/XeetaStreamer.app` ou copiado pra
+  `/Applications`.
+- **Windows**: gera `dist/XeetaStreamer/` (pasta com `XeetaStreamer.exe` + dependências) — distribua a
+  pasta inteira, ou rode `pyinstaller --onefile` no lugar de `--windowed` sozinho pra gerar um único
+  `.exe` (inicialização um pouco mais lenta, mas só um arquivo pra distribuir).
+
+`run.py` (na raiz de `desktop-app/`, fora do pacote `xeeta_streamer_app/`) existe só pra isso: o
+`xeeta_streamer_app/app.py` usa imports relativos (assume que faz parte do pacote), o que não funciona
+se o PyInstaller apontar direto pra ele como script principal — o wrapper resolve isso com um import
+absoluto.
+
+Notas:
+- `pycaw` (volume por processo no Windows) já é resolvido automaticamente pelo
+  `pip install -r requirements.txt` — o `requirements.txt` marca essa dependência como
+  `sys_platform == "win32"`, então só instala (e só é empacotada) ao rodar no Windows.
+- A build gera `desktop-app/build/`, `desktop-app/dist/` e um `XeetaStreamer.spec` — todos ignorados
+  pelo git (`.gitignore`); rode a build de novo a qualquer momento, não precisa versionar isso.
+- A mesma exigência de permissão de Acessibilidade do modo dev (macOS) vale pro executável empacotado.
