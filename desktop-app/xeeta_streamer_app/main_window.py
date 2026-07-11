@@ -106,8 +106,9 @@ class MainWindow(QMainWindow):
             on_volume_down=lambda: self._handle_hotkey_volume(-1),
         )
         self._hotkey_listener.start()
-
+    ## TODO: FIX ajustar aumento de volume via encoder
     def _handle_hotkey_key_trigger(self, logical_id: int) -> None:
+        print(f"[hotkey] key_trigger logical_id={logical_id} known_active_profile_id={self.known_active_profile_id}")
         profile = self._local_store.get(self.known_active_profile_id)
         if logical_id < len(profile.keys):
             app_path = profile.keys[logical_id].app_path
@@ -116,6 +117,7 @@ class MainWindow(QMainWindow):
 
     def _handle_hotkey_volume(self, direction: int) -> None:
         profile = self._local_store.get(self.known_active_profile_id)
+        print(f"[hotkey] volume direction={direction} known_active_profile_id={self.known_active_profile_id} volume_mixer_app={profile.volume_mixer_app!r}")
         volume_control.adjust_volume(profile.volume_mixer_app, direction)
 
     def _build_ui(self) -> None:
