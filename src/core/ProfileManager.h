@@ -22,12 +22,18 @@ public:
     // resolve em KeyAction do perfil ativo e envia via HidTransport.
     void update();
 
+    // Resolve um unico InputEvent ja obtido externamente (ex: um caller que
+    // precisa inspecionar/logar o evento antes de despachar — ver
+    // src/models/essential/main.cpp). Nao chamar isto E update() no mesmo
+    // ciclo sobre a mesma InputSource: update() já faz seu próprio poll()
+    // e drenaria a fila de novo, perdendo os eventos já consumidos aqui.
+    void handleEvent(const InputEvent &event);
+
 private:
     InputSource &input_;
     DisplayDriver &display_;
     HidTransport &hid_;
 
-    void handleEvent(const InputEvent &event);
     void resolveKey(uint8_t logicalId, bool pressed);
     void switchToNextProfile();
     void switchToPreviousProfile();

@@ -134,15 +134,35 @@ modelo pluga suas próprias implementações no `main.cpp` correspondente:
 
 | Modelo       | `InputSource`                              | `DisplayDriver`               | `HidTransport` (padrão) |
 |--------------|----------------------------------------------|-----------------------------------|-----------------------------|
-| Essential    | `ButtonMatrixInput`                         | `NullDisplay` (no-op)             | `BleHidTransport`            |
+| Essential    | `DirectGpioInput` + `EncoderInput` (via `CompositeInputSource`) | `NullDisplay` (no-op) | `BleHidTransport` |
 | Streamer     | `ButtonMatrixInput` + `EncoderInput` (via `CompositeInputSource`) | `OledStatusDisplay` | `BleHidTransport`            |
 | Creator Pro  | `TouchscreenInput` (stub)                   | `TftTouchDisplay` (stub)          | `UsbHidTransport`            |
 
-`ButtonMatrixInput` mora em `src/hal/common/` porque é compartilhada entre Essential e Streamer;
+`ButtonMatrixInput` (varredura linha/coluna), `DirectGpioInput` (N botões cada um no seu próprio pino,
+sem matriz) e `EncoderInput` moram em `src/hal/common/` por serem reaproveitáveis entre modelos;
 implementações exclusivas de um modelo ficam em `src/hal/<modelo>/`. Cada `env` do `platformio.ini`
 exclui via `build_src_filter` as pastas de HAL e de transporte HID que não pertencem a ele — assim o
 binário de cada modelo só linka o que realmente usa (ex: Essential não linka `Adafruit_SSD1306`; Creator
 Pro não linka a stack BLE).
+
+`ButtonMatrixInput` exige fiação em matriz (linhas/colunas com diodos); `DirectGpioInput` é para quando
+cada tecla tem seu próprio GPIO dedicado ligado direto ao GND (mais simples de montar em protótipo, ao
+custo de usar mais pinos). Use a que bater com a fiação real — ligar botões diretos e tentar ler com
+`ButtonMatrixInput` (ou vice-versa) não funciona; foi exatamente esse o bug encontrado e corrigido no
+bring-up do protótipo Essential (ver pinout validado abaixo).
+
+#### Pinout validado — protótipo Essential (5 botões + encoder, ESP32 WROOM-32)
+
+```
+Tecla 1 → GPIO4      Tecla 4 → GPIO14
+Tecla 2 → GPIO5      Tecla 5 → GPIO16
+Tecla 3 → GPIO13     Encoder CLK → GPIO21, DT → GPIO22, SW → GPIO25
+```
+
+Testado ponta a ponta em hardware real: os 5 botões, a rotação do encoder (`ROTATE_CW`/`ROTATE_CCW`) e o
+clique do encoder (id lógico reservado `ENCODER_BUTTON_LOGICAL_ID = 0xFE`) disparam eventos distintos.
+Ver `src/models/essential/main.cpp` — tem um flag `DEBUG_LOG_INPUT_EVENTS` (desligado por padrão) que
+liga log de cada `InputEvent` + dump periódico do estado cru de cada pino, útil pra depurar fiação nova.
 
 ### ProfileManager e HidTransport
 

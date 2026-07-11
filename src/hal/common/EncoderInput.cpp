@@ -1,4 +1,4 @@
-#include "hal/streamer/EncoderInput.h"
+#include "hal/common/EncoderInput.h"
 
 #include <Arduino.h>
 

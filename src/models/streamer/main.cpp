@@ -6,7 +6,7 @@
 #include "core/hid/ble/BleHidTransport.h"
 #include "hal/common/ButtonMatrixInput.h"
 #include "hal/common/CompositeInputSource.h"
-#include "hal/streamer/EncoderInput.h"
+#include "hal/common/EncoderInput.h"
 #include "hal/streamer/OledStatusDisplay.h"
 
 namespace {
