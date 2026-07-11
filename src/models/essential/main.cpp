@@ -67,17 +67,19 @@ void loop() {
     }
 
 #if DEBUG_LOG_INPUT_EVENTS
+    // Percorre BUTTON_PINS pelo tamanho real do array — nunca assume uma
+    // quantidade fixa de botoes, pra nao quebrar silenciosamente se o
+    // prototipo ganhar/perder teclas (motivo original do bug corrigido aqui:
+    // o codigo assumia uma topologia fixa que nao batia com o hardware real).
     static unsigned long lastDump = 0;
     unsigned long now = millis();
     if (now - lastDump >= 500) {
         lastDump = now;
-        Serial.printf(
-            "[raw] b1(%d)=%d b2(%d)=%d b3(%d)=%d b4(%d)=%d b5(%d)=%d clk(%d)=%d dt(%d)=%d sw(%d)=%d\n",
-            BUTTON_PINS[0], digitalRead(BUTTON_PINS[0]),
-            BUTTON_PINS[1], digitalRead(BUTTON_PINS[1]),
-            BUTTON_PINS[2], digitalRead(BUTTON_PINS[2]),
-            BUTTON_PINS[3], digitalRead(BUTTON_PINS[3]),
-            BUTTON_PINS[4], digitalRead(BUTTON_PINS[4]),
+        Serial.print("[raw] ");
+        for (uint8_t i = 0; i < sizeof(BUTTON_PINS); i++) {
+            Serial.printf("b%u(%u)=%d ", i + 1, BUTTON_PINS[i], digitalRead(BUTTON_PINS[i]));
+        }
+        Serial.printf("clk(%u)=%d dt(%u)=%d sw(%u)=%d\n",
             ENCODER_PIN_CLK, digitalRead(ENCODER_PIN_CLK),
             ENCODER_PIN_DT, digitalRead(ENCODER_PIN_DT),
             ENCODER_PIN_SW, digitalRead(ENCODER_PIN_SW));
