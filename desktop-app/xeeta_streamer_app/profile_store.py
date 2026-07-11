@@ -15,26 +15,41 @@ from . import protocol
 DEFAULT_PATH = Path.home() / ".xeeta-streamer" / "profiles.json"
 
 
+def _key_to_dict(key: protocol.KeyAction) -> dict:
+    entry = {"modifiers": key.modifier_names(), "keycode": key.keycode}
+    if key.named_action:
+        # Presente so quando a tecla veio de uma acao nomeada (spec
+        # target-os-shortcuts) — permite re-resolver so essas ao trocar o
+        # target_os do perfil, sem tocar em teclas mapeadas manualmente.
+        entry["named_action"] = key.named_action
+    return entry
+
+
 def _profile_to_dict(profile_id: int, profile: protocol.Profile) -> dict:
     return {
         "id": profile_id,
         "name": profile.name,
-        "keys": [
-            {"modifiers": key.modifier_names(), "keycode": key.keycode}
-            for key in profile.keys
-        ],
+        "target_os": profile.target_os,
+        "keys": [_key_to_dict(key) for key in profile.keys],
     }
 
 
 def _profile_from_dict(data: dict) -> tuple[int, protocol.Profile]:
     keys = [
-        protocol.KeyAction.from_modifier_names(entry.get("modifiers", []), entry.get("keycode", 0))
+        protocol.KeyAction.from_modifier_names(
+            entry.get("modifiers", []),
+            entry.get("keycode", 0),
+            named_action=entry.get("named_action"),
+        )
         for entry in data.get("keys", [])
     ]
     while len(keys) < protocol.MAX_KEYS_PER_PROFILE:
         keys.append(protocol.KeyAction(protocol.MOD_NONE, 0))
 
-    profile = protocol.Profile(name=data.get("name", ""), keys=keys)
+    # Perfis salvos antes desta spec nao tem target_os — default WINDOWS,
+    # sem reescrever nada ate o usuario salvar de novo (ver design.md).
+    target_os = data.get("target_os", protocol.DEFAULT_TARGET_OS)
+    profile = protocol.Profile(name=data.get("name", ""), keys=keys, target_os=target_os)
     return data["id"], profile
 
 

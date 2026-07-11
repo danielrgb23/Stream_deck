@@ -27,6 +27,14 @@ MOD_SHIFT = 0x02
 MOD_ALT = 0x04
 MOD_GUI = 0x08
 
+# Sistema operacional alvo de um perfil (spec target-os-shortcuts). Vive só
+# no lado do app (JSON local) — nunca é enviado ao firmware, que só recebe
+# modifiers/keycode ja resolvidos via Profile.to_bytes().
+TARGET_OS_WINDOWS = "WINDOWS"
+TARGET_OS_MAC = "MAC"
+TARGET_OS_CHOICES = [TARGET_OS_WINDOWS, TARGET_OS_MAC]
+DEFAULT_TARGET_OS = TARGET_OS_WINDOWS
+
 MODIFIER_NAMES = {
     MOD_CTRL: "CTRL",
     MOD_SHIFT: "SHIFT",
@@ -120,16 +128,21 @@ class PacketParser:
 class KeyAction:
     modifiers: int
     keycode: int
+    # Nome da acao nomeada (ver named_actions.py) que gerou este
+    # modifiers/keycode, ou None se foi montado manualmente no editor.
+    # Metadado local apenas — Profile.to_bytes() nao serializa este campo,
+    # o firmware nunca recebe/conhece isto (spec target-os-shortcuts).
+    named_action: str | None = None
 
     def modifier_names(self) -> list[str]:
         return [name for bit, name in MODIFIER_NAMES.items() if self.modifiers & bit]
 
     @staticmethod
-    def from_modifier_names(names: list[str], keycode: int) -> "KeyAction":
+    def from_modifier_names(names: list[str], keycode: int, named_action: str | None = None) -> "KeyAction":
         modifiers = 0
         for name in names:
             modifiers |= NAME_TO_MODIFIER[name]
-        return KeyAction(modifiers=modifiers, keycode=keycode)
+        return KeyAction(modifiers=modifiers, keycode=keycode, named_action=named_action)
 
 
 @dataclass
@@ -137,6 +150,9 @@ class Profile:
     name: str
     keys: list[KeyAction]
     schema_version: int = PROFILE_SCHEMA_VERSION
+    # Sistema operacional alvo (spec target-os-shortcuts). Metadado local
+    # apenas — Profile.to_bytes() nao serializa este campo.
+    target_os: str = DEFAULT_TARGET_OS
 
     def to_bytes(self) -> bytes:
         name_bytes = self.name.encode("ascii", errors="replace")[: PROFILE_NAME_LENGTH - 1]
