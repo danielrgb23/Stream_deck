@@ -63,21 +63,25 @@ precisa ser confirmado rodando o app de verdade.
 
 ## 6. Listener de atalho global + dispatch de ação
 
-- [ ] 6.1 Adicionar dependência `pynput` (`requirements.txt`)
-- [ ] 6.2 Registrar os 8 combos de tecla + 2 de volume como atalhos globais, numa thread própria
-- [ ] 6.3 Handler "abrir app": resolve `app_path` da tecla no perfil ativo conhecido e chama
+- [x] 6.1 Adicionar dependência `pynput` (`requirements.txt`)
+- [x] 6.2 Registrar os 8 combos de tecla + 2 de volume como atalhos globais, numa thread própria
+      (`hotkey_listener.py`) — **nota**: combos de volume mudaram de F21/F22 para setas cima/baixo,
+      porque `pynput` só suporta F1-F20 (achado durante o teste, corrigido em firmware + protocol.py)
+- [x] 6.3 Handler "abrir app": resolve `app_path` da tecla no perfil ativo conhecido e chama
       `installed_apps.open_app()`
-- [ ] 6.4 Handler "ajustar volume": resolve `volume_mixer_app` do perfil ativo conhecido, delega para o
+- [x] 6.4 Handler "ajustar volume": resolve `volume_mixer_app` do perfil ativo conhecido, delega para o
       módulo de volume (task 7)
 
 ## 7. Volume por processo
 
-- [ ] 7.1 Adicionar dependência `pycaw` (`requirements.txt`, só relevante no Windows)
-- [ ] 7.2 `volume_control.py`: Windows — localizar sessão de áudio do processo vinculado via
+- [x] 7.1 Adicionar dependência `pycaw` (`requirements.txt`, marcada `sys_platform == "win32"`)
+- [x] 7.2 `volume_control.py`: Windows — localizar sessão de áudio do processo vinculado via
       `AudioUtilities.GetAllSessions()`, ajustar via `ISimpleAudioVolume`; sem sessão encontrada → master
-- [ ] 7.3 `volume_control.py`: Mac — sempre ajusta volume master (sem tentativa de volume por processo)
-- [ ] 7.4 `volume_control.py`: fallback de volume master multiplataforma (o que usar quando não há
-      `pycaw`/no Mac)
+      (revisão de código apenas; sem Windows disponível neste ambiente)
+- [x] 7.3 `volume_control.py`: Mac — sempre ajusta volume master via `osascript` (sem tentativa de
+      volume por processo) — **testado ao vivo neste Mac real**: 100%→95%→90%→100% confirmado
+- [x] 7.4 `volume_control.py`: fallback de volume master multiplataforma — Windows via
+      `IAudioEndpointVolume` (pycaw), Mac via `osascript` (testado)
 
 ## 8. Validação
 

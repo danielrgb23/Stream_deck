@@ -47,9 +47,11 @@ RESERVED_ACTION_MODIFIERS = MOD_CTRL | MOD_ALT | MOD_SHIFT
 RESERVED_KEY_TRIGGER_KEYCODES = [0xF0 + i for i in range(MAX_KEYS_PER_PROFILE)]
 
 # Fixos — emitidos pelo firmware na rotação do encoder, não fazem parte do
-# array keys[] de nenhum perfil (ver ReservedVolumeCombo.h).
-RESERVED_VOLUME_UP_KEYCODE = 0xF8  # F21
-RESERVED_VOLUME_DOWN_KEYCODE = 0xF9  # F22
+# array keys[] de nenhum perfil (ver ReservedVolumeCombo.h). Setas em vez de
+# F21/F22 porque a lib de atalho global do app desktop (pynput) só suporta
+# F1-F20.
+RESERVED_VOLUME_UP_KEYCODE = 0xDA  # seta para cima
+RESERVED_VOLUME_DOWN_KEYCODE = 0xD9  # seta para baixo
 
 MODIFIER_NAMES = {
     MOD_CTRL: "CTRL",

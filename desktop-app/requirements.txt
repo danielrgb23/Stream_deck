@@ -1,2 +1,8 @@
 PyQt6>=6.6
 pyserial>=3.5
+pynput>=1.7
+
+# Windows apenas (spec app-launcher-volume-mixer: volume por processo via
+# Core Audio). Instalar manualmente no Windows; em Mac/Linux este pacote
+# nao instala (nao tem wheel) e volume_control.py detecta isso e ignora.
+pycaw>=20240210; sys_platform == "win32"

@@ -9,9 +9,11 @@
 // do array keys[] do perfil: rotacao do encoder nunca foi uma "tecla logica"
 // configuravel por posicao, e continua nao sendo.
 //
-// Ctrl+Alt+Shift + F21/F22 — faixa extremamente incomum de colidir com
-// atalhos de outros programas. keycode segue a convencao Arduino Keyboard
-// (ver desktop-app/xeeta_streamer_app/keycodes.py), nao usage ID cru de HID.
+// Ctrl+Alt+Shift + seta pra cima/baixo — faixa incomum de colidir com
+// atalhos de outros programas, e nao usa F21/F22 porque a lib de atalho
+// global do app desktop (pynput) so suporta F1-F20. keycode segue a
+// convencao Arduino Keyboard (ver desktop-app/xeeta_streamer_app/keycodes.py),
+// nao usage ID cru de HID.
 #define VOLUME_COMBO_MODIFIERS (MOD_CTRL | MOD_ALT | MOD_SHIFT)
-#define VOLUME_UP_KEYCODE 0xF8   // F21
-#define VOLUME_DOWN_KEYCODE 0xF9 // F22
+#define VOLUME_UP_KEYCODE 0xDA   // seta para cima
+#define VOLUME_DOWN_KEYCODE 0xD9 // seta para baixo

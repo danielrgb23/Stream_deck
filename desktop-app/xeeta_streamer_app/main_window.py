@@ -26,9 +26,10 @@ from PyQt6.QtWidgets import (
     QWidget,
 )
 
-from . import presets, profile_store, protocol
+from . import installed_apps, presets, profile_store, protocol, volume_control
 from .device_worker import DeviceWorker
 from .editor_widget import ProfileEditorWidget
+from .hotkey_listener import HotkeyListener
 from .installed_apps_panel import InstalledAppsPanel
 
 # Intervalo de polling do perfil ativo (GET_ACTIVE_PROFILE, comando já
@@ -95,6 +96,27 @@ class MainWindow(QMainWindow):
         self._build_ui()
         self._build_tray_icon()
         self._editor.set_profile(self._local_store.get(self._current_profile_id))
+
+        # Roda independente de estar conectado ou nao — reage a combos que o
+        # PROPRIO device ja emitiu como HID, nao fala com a porta serial
+        # (spec app-launcher-volume-mixer).
+        self._hotkey_listener = HotkeyListener(
+            on_key_trigger=self._handle_hotkey_key_trigger,
+            on_volume_up=lambda: self._handle_hotkey_volume(+1),
+            on_volume_down=lambda: self._handle_hotkey_volume(-1),
+        )
+        self._hotkey_listener.start()
+
+    def _handle_hotkey_key_trigger(self, logical_id: int) -> None:
+        profile = self._local_store.get(self.known_active_profile_id)
+        if logical_id < len(profile.keys):
+            app_path = profile.keys[logical_id].app_path
+            if app_path:
+                installed_apps.open_app(app_path)
+
+    def _handle_hotkey_volume(self, direction: int) -> None:
+        profile = self._local_store.get(self.known_active_profile_id)
+        volume_control.adjust_volume(profile.volume_mixer_app, direction)
 
     def _build_ui(self) -> None:
         central = QWidget()
@@ -170,6 +192,7 @@ class MainWindow(QMainWindow):
 
     def _quit_application(self) -> None:
         self._active_profile_timer.stop()
+        self._hotkey_listener.stop()
         self._worker_thread.quit()
         self._worker_thread.wait()
         self._tray_icon.hide()
