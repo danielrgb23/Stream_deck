@@ -36,13 +36,16 @@
 
 ## 4. Editor (UI)
 
-- [ ] 4.1 Painel lateral com a lista de apps instalados (arrastável)
-- [ ] 4.2 Suporte a drag-and-drop de um app para um `KeySlotWidget` → grava `app_path` + combo reservado
-      daquela posição; UI mostra "Abrir app: <nome>" no lugar dos checkboxes/combo manual
-- [ ] 4.3 Área de "app de volume" no editor de perfil, aceitando drag-and-drop → grava
-      `volume_mixer_app`
-- [ ] 4.4 Indicar visualmente quando rodando no Mac que volume por processo não está disponível
-      (fallback sempre master)
+- [x] 4.1 Painel lateral com a lista de apps instalados (arrastável) — `installed_apps_panel.py`,
+      integrado em `main_window.py`
+- [x] 4.2 Suporte a drag-and-drop de um app para um `KeySlotWidget` → grava `app_path` + combo reservado
+      daquela posição; UI mostra "Abrir app: <nome>" no lugar dos checkboxes/combo manual (via
+      `QStackedWidget`)
+- [x] 4.3 Área de "app de volume" no editor de perfil, aceitando drag-and-drop → grava
+      `volume_mixer_app` (`VolumeAppDropArea`, clique direito remove)
+- [x] 4.4 Indicar visualmente quando rodando no Mac que volume por processo não está disponível
+      (fallback sempre master) — aviso fixo abaixo da área de app de volume quando `platform.system()
+      == "Darwin"`
 
 ## 5. App residente (bandeja do sistema)
 

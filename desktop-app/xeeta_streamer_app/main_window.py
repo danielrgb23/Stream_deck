@@ -21,6 +21,7 @@ from PyQt6.QtWidgets import (
 from . import presets, profile_store, protocol
 from .device_worker import DeviceWorker
 from .editor_widget import ProfileEditorWidget
+from .installed_apps_panel import InstalledAppsPanel
 
 
 class MainWindow(QMainWindow):
@@ -87,8 +88,12 @@ class MainWindow(QMainWindow):
 
         layout.addLayout(profile_row)
 
+        editor_row = QHBoxLayout()
         self._editor = ProfileEditorWidget()
-        layout.addWidget(self._editor)
+        editor_row.addWidget(self._editor, stretch=3)
+        self._apps_panel = InstalledAppsPanel()
+        editor_row.addWidget(self._apps_panel, stretch=1)
+        layout.addLayout(editor_row)
 
         save_row = QHBoxLayout()
         self._save_button = QPushButton("Salvar (device + local)")
