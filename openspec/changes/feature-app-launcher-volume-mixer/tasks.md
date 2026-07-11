@@ -27,10 +27,12 @@
 
 ## 3. Enumeração de apps instalados
 
-- [ ] 3.1 `installed_apps.py`: listar atalhos do Menu Iniciar no Windows (nome + caminho do `.lnk`)
-- [ ] 3.2 `installed_apps.py`: listar pacotes `.app` em `/Applications` (+ `~/Applications`) no Mac
-- [ ] 3.3 Função `open_app(path)` multiplataforma (`os.startfile` no Windows, `open -a`/`subprocess` no
-      Mac)
+- [x] 3.1 `installed_apps.py`: listar atalhos do Menu Iniciar no Windows (nome + caminho do `.lnk`) —
+      lógica implementada; não testável neste ambiente (sem Windows disponível)
+- [x] 3.2 `installed_apps.py`: listar pacotes `.app` em `/Applications` (+ `~/Applications`) no Mac —
+      testado neste Mac real (20 apps encontrados)
+- [x] 3.3 Função `open_app(path)` multiplataforma (`os.startfile` no Windows, `open`/`subprocess` no
+      Mac) — revisão de código apenas; não executado (evitar abrir um app de verdade durante o teste)
 
 ## 4. Editor (UI)
 
