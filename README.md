@@ -108,9 +108,21 @@ Comandos desta fase:
 | `0x02`     | `CMD_PONG`       | `"PONG"` (ASCII, 4 bytes) — resposta ao `PING`                  |
 | `0x03`     | `CMD_GET_VERSION`| vazio                                                            |
 | `0x04`     | `CMD_VERSION_INFO`| `[fw_major][fw_minor][fw_patch][protocol_version]` — resposta ao `GET_VERSION` |
+| `0x05`     | `CMD_GET_ACTIVE_PROFILE` | vazio                                                    |
+| `0x06`     | `CMD_ACTIVE_PROFILE_INFO`| `[profile_id][name (16 bytes)]` — resposta ao `GET_ACTIVE_PROFILE` |
 
-Comandos de feature (`SET_PROFILE`, `GET_PROFILE`, `UPLOAD_ICON`, ...) são definidos pelas specs de
-feature correspondentes, a partir de `0x10`, não por esta spec — ver `openspec/changes/0003-serial-protocol`.
+Comandos de feature (a partir de `0x10`, spec `feature-button-mapping`):
+
+| command_id | Nome                | Payload                                                        |
+|-----------:|----------------------|-------------------------------------------------------------------|
+| `0x10`     | `CMD_GET_PROFILE`    | `[profile_id]`                                                     |
+| `0x11`     | `CMD_PROFILE_INFO`   | `[profile_id][Profile serializado]` (33 bytes: `schema_version` + `name[16]` + `keys[8]` de `{modifiers, keycode}`, ver `src/core/Profile.h`) — resposta ao `GET_PROFILE` |
+| `0x12`     | `CMD_SET_PROFILE`    | `[profile_id][Profile serializado]` — grava no NVS via `ProfileStore::saveProfile` |
+| `0x13`     | `CMD_SET_PROFILE_ACK`| `[profile_id][status]` (`0` = ok, `1` = payload/id inválido) — resposta ao `SET_PROFILE` |
+
+`UPLOAD_ICON` (mencionado no proposal de `serial-protocol`) não foi implementado — nenhum dos três
+modelos tem tela por tecla nesta fase (Streamer usa só o nome do perfil no OLED central; Creator Pro é
+stub). Fica em aberto para quando o Creator Pro sair de stub.
 
 Teste manual (ver `docs/serial-protocol-manual-test.md`).
 

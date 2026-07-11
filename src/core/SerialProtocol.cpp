@@ -59,6 +59,42 @@ void handleGetActiveProfile() {
     sendPacket(CMD_ACTIVE_PROFILE_INFO, body, sizeof(body));
 }
 
+// Payload esperado: [profile_id (1 byte)]. Responde CMD_PROFILE_INFO com
+// [profile_id][Profile serializado] — o app desktop usa isto para popular o
+// editor de mapeamento (feature-button-mapping).
+void handleGetProfile(const SerialPacket &packet) {
+    if (packet.payload_length < 1) {
+        return;
+    }
+
+    uint8_t profileId = packet.payload[0];
+    uint8_t body[1 + sizeof(Profile)];
+    body[0] = profileId;
+    memcpy(body + 1, &ProfileStore::getProfile(profileId), sizeof(Profile));
+    sendPacket(CMD_PROFILE_INFO, body, sizeof(body));
+}
+
+// Payload esperado: [profile_id (1 byte)][Profile serializado]. Grava no
+// NVS via ProfileStore::saveProfile — unico ponto de escrita explicita
+// vindo do app desktop (spec persistence-schema). Responde
+// CMD_SET_PROFILE_ACK com [profile_id][status] (0 = ok, 1 = payload invalido).
+void handleSetProfile(const SerialPacket &packet) {
+    uint8_t requestedId = packet.payload_length > 0 ? packet.payload[0] : (uint8_t)0xFF;
+
+    if (packet.payload_length != 1 + sizeof(Profile) || requestedId >= MAX_PROFILES) {
+        uint8_t body[2] = {requestedId, 1}; // status 1 = payload ou profile_id invalido
+        sendPacket(CMD_SET_PROFILE_ACK, body, sizeof(body));
+        return;
+    }
+
+    Profile profile;
+    memcpy(&profile, packet.payload + 1, sizeof(Profile));
+    ProfileStore::saveProfile(requestedId, profile);
+
+    uint8_t body[2] = {requestedId, 0};
+    sendPacket(CMD_SET_PROFILE_ACK, body, sizeof(body));
+}
+
 void dispatch(const SerialPacket &packet) {
     switch (packet.command_id) {
         case CMD_PING:
@@ -69,6 +105,12 @@ void dispatch(const SerialPacket &packet) {
             break;
         case CMD_GET_ACTIVE_PROFILE:
             handleGetActiveProfile();
+            break;
+        case CMD_GET_PROFILE:
+            handleGetProfile(packet);
+            break;
+        case CMD_SET_PROFILE:
+            handleSetProfile(packet);
             break;
         default:
             // Comando desconhecido nesta fase (comandos de feature sao

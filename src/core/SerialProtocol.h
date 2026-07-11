@@ -29,6 +29,16 @@ enum SerialCommand : uint8_t {
     // feature-desktop-app-sync, nao desta spec de fundacao.
     CMD_GET_ACTIVE_PROFILE = 0x05,
     CMD_ACTIVE_PROFILE_INFO = 0x06,
+
+    // Comandos de feature-button-mapping: leitura/escrita de um perfil
+    // completo pelo app desktop. Payload de CMD_GET_PROFILE e o prefixo de
+    // CMD_SET_PROFILE e [profile_id (1 byte)]; payload de CMD_PROFILE_INFO e
+    // de CMD_SET_PROFILE (apos o profile_id) e o struct Profile serializado
+    // (src/core/Profile.h) byte a byte, sem padding.
+    CMD_GET_PROFILE = 0x10,
+    CMD_PROFILE_INFO = 0x11,
+    CMD_SET_PROFILE = 0x12,
+    CMD_SET_PROFILE_ACK = 0x13,
 };
 
 // Envelope de pacote (spec serial-protocol):

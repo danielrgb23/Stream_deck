@@ -2,3 +2,7 @@
 .vscode/
 .DS_Store
 .claude/
+
+# Repositorios de referencia (Sparkpad-Arduino, MacroTouch) — clonados como
+# material de leitura, nunca fazem parte deste repositorio (ver README.md).
+reference/

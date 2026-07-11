@@ -22,11 +22,21 @@ void OledStatusDisplay::init() {
 }
 
 void OledStatusDisplay::showProfile(const Profile &profile) {
+    // Layout simples (spec feature-oled-status-display): rotulo pequeno em
+    // cima, nome do perfil em destaque embaixo. Renderizacao e sincrona —
+    // chamada diretamente por ProfileManager na troca de perfil, sem fila
+    // ou delay, o que garante a atualizacao em bem menos de 200ms.
     display.clearDisplay();
-    display.setTextSize(2);
+
+    display.setTextSize(1);
     display.setTextColor(SSD1306_WHITE);
-    display.setCursor(0, 8);
+    display.setCursor(0, 0);
+    display.println("Perfil ativo:");
+
+    display.setTextSize(2);
+    display.setCursor(0, 14);
     display.println(profile.name);
+
     display.display();
 }
 
