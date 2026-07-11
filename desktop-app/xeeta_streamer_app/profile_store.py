@@ -22,16 +22,24 @@ def _key_to_dict(key: protocol.KeyAction) -> dict:
         # target-os-shortcuts) — permite re-resolver so essas ao trocar o
         # target_os do perfil, sem tocar em teclas mapeadas manualmente.
         entry["named_action"] = key.named_action
+    if key.app_path:
+        # Presente so quando a tecla abre um app (spec
+        # app-launcher-volume-mixer) — modifiers/keycode acima e o combo
+        # reservado daquela posicao, app_path e so metadado local.
+        entry["app_path"] = key.app_path
     return entry
 
 
 def _profile_to_dict(profile_id: int, profile: protocol.Profile) -> dict:
-    return {
+    data = {
         "id": profile_id,
         "name": profile.name,
         "target_os": profile.target_os,
         "keys": [_key_to_dict(key) for key in profile.keys],
     }
+    if profile.volume_mixer_app:
+        data["volume_mixer_app"] = profile.volume_mixer_app
+    return data
 
 
 def _profile_from_dict(data: dict) -> tuple[int, protocol.Profile]:
@@ -43,13 +51,23 @@ def _profile_from_dict(data: dict) -> tuple[int, protocol.Profile]:
         )
         for entry in data.get("keys", [])
     ]
+    for key, entry in zip(keys, data.get("keys", [])):
+        key.app_path = entry.get("app_path")
     while len(keys) < protocol.MAX_KEYS_PER_PROFILE:
         keys.append(protocol.KeyAction(protocol.MOD_NONE, 0))
 
-    # Perfis salvos antes desta spec nao tem target_os — default WINDOWS,
-    # sem reescrever nada ate o usuario salvar de novo (ver design.md).
+    # Perfis salvos antes destas specs nao tem target_os/volume_mixer_app —
+    # default WINDOWS / sem app vinculado, sem reescrever nada ate o usuario
+    # salvar de novo (ver design.md de target-os-shortcuts e
+    # app-launcher-volume-mixer).
     target_os = data.get("target_os", protocol.DEFAULT_TARGET_OS)
-    profile = protocol.Profile(name=data.get("name", ""), keys=keys, target_os=target_os)
+    volume_mixer_app = data.get("volume_mixer_app")
+    profile = protocol.Profile(
+        name=data.get("name", ""),
+        keys=keys,
+        target_os=target_os,
+        volume_mixer_app=volume_mixer_app,
+    )
     return data["id"], profile
 
 

@@ -35,6 +35,22 @@ TARGET_OS_MAC = "MAC"
 TARGET_OS_CHOICES = [TARGET_OS_WINDOWS, TARGET_OS_MAC]
 DEFAULT_TARGET_OS = TARGET_OS_WINDOWS
 
+# Combos HID reservados (spec app-launcher-volume-mixer) — sinalizam "abrir
+# app"/"ajustar volume" ao app residente via atalho global do SO. Precisam
+# bater exatamente com o firmware (src/core/ReservedVolumeCombo.h para os de
+# volume; os de tecla são só um valor de modifiers/keycode como outro
+# qualquer, gravados via SET_PROFILE normalmente).
+RESERVED_ACTION_MODIFIERS = MOD_CTRL | MOD_ALT | MOD_SHIFT
+
+# Um combo por posição de tecla física (F13..F20), na mesma ordem de
+# MAX_KEYS_PER_PROFILE — ver keycodes.py (F13 = 0xF0, F14 = 0xF1, ...).
+RESERVED_KEY_TRIGGER_KEYCODES = [0xF0 + i for i in range(MAX_KEYS_PER_PROFILE)]
+
+# Fixos — emitidos pelo firmware na rotação do encoder, não fazem parte do
+# array keys[] de nenhum perfil (ver ReservedVolumeCombo.h).
+RESERVED_VOLUME_UP_KEYCODE = 0xF8  # F21
+RESERVED_VOLUME_DOWN_KEYCODE = 0xF9  # F22
+
 MODIFIER_NAMES = {
     MOD_CTRL: "CTRL",
     MOD_SHIFT: "SHIFT",
@@ -133,6 +149,12 @@ class KeyAction:
     # Metadado local apenas — Profile.to_bytes() nao serializa este campo,
     # o firmware nunca recebe/conhece isto (spec target-os-shortcuts).
     named_action: str | None = None
+    # Caminho do executavel vinculado (spec app-launcher-volume-mixer).
+    # Quando presente, modifiers/keycode SHALL ser o combo reservado da
+    # posicao de tecla correspondente (ver app_launcher.py) — o app residente
+    # detecta esse combo via atalho global e abre este app. Metadado local
+    # apenas, igual named_action.
+    app_path: str | None = None
 
     def modifier_names(self) -> list[str]:
         return [name for bit, name in MODIFIER_NAMES.items() if self.modifiers & bit]
@@ -153,6 +175,12 @@ class Profile:
     # Sistema operacional alvo (spec target-os-shortcuts). Metadado local
     # apenas — Profile.to_bytes() nao serializa este campo.
     target_os: str = DEFAULT_TARGET_OS
+    # Caminho (Windows) ou nome de processo (Mac) do app cujo volume o
+    # encoder ajusta enquanto este perfil estiver ativo (spec
+    # app-launcher-volume-mixer). None = volume master do sistema. Metadado
+    # local apenas — Profile.to_bytes() nao serializa este campo; no Mac,
+    # este campo e sempre ignorado no ajuste real (ver volume_control.py).
+    volume_mixer_app: str | None = None
 
     def to_bytes(self) -> bytes:
         name_bytes = self.name.encode("ascii", errors="replace")[: PROFILE_NAME_LENGTH - 1]

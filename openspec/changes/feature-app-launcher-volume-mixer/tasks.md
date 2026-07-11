@@ -17,13 +17,13 @@
 
 ## 2. Modelo de dados (app desktop)
 
-- [ ] 2.1 Adicionar campo opcional `app_path` em `KeyAction` (`protocol.py`), análogo a `named_action`
-- [ ] 2.2 Adicionar campo opcional `volume_mixer_app` em `Profile` (`protocol.py`)
-- [ ] 2.3 Definir a tabela de 8 combos reservados por posição de tecla (`app_launcher.py` novo módulo)
-- [ ] 2.4 Atualizar `profile_store.py` (leitura/escrita dos dois campos novos no JSON local)
-- [ ] 2.5 Atualizar `docs/desktop-profile-format.md` com os campos novos
-- [ ] 2.6 Confirmar que `Profile.to_bytes()`/`from_bytes()` continuam ignorando os dois campos (wire
-      format inalterado)
+- [x] 2.1 Adicionar campo opcional `app_path` em `KeyAction` (`protocol.py`), análogo a `named_action`
+- [x] 2.2 Adicionar campo opcional `volume_mixer_app` em `Profile` (`protocol.py`)
+- [x] 2.3 Definir a tabela de 8 combos reservados por posição de tecla (`app_launcher.py` novo módulo)
+- [x] 2.4 Atualizar `profile_store.py` (leitura/escrita dos dois campos novos no JSON local)
+- [x] 2.5 Atualizar `docs/desktop-profile-format.md` com os campos novos
+- [x] 2.6 Confirmar que `Profile.to_bytes()`/`from_bytes()` continuam ignorando os dois campos (wire
+      format inalterado) — coberto por teste automatizado
 
 ## 3. Enumeração de apps instalados
 

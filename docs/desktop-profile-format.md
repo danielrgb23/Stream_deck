@@ -1,7 +1,7 @@
 # Formato do arquivo local de perfis do app desktop
 
 Definido pela spec `persistence-schema`, usado pelo módulo `desktop-app/xeeta_streamer_app/profile_store.py`
-(specs `feature-desktop-app-sync` e `target-os-shortcuts`).
+(specs `feature-desktop-app-sync`, `target-os-shortcuts` e `app-launcher-volume-mixer`).
 
 ## Localização
 
@@ -22,8 +22,10 @@ banco relacional — ver design de 0002). SQLite fica em aberto como evolução 
       "id": 0,
       "name": "OBS",
       "target_os": "MAC",
+      "volume_mixer_app": "Discord",
       "keys": [
         { "modifiers": ["GUI"], "keycode": 99, "named_action": "COPY" },
+        { "modifiers": ["CTRL", "ALT", "SHIFT"], "keycode": 240, "app_path": "/Applications/Spotify.app" },
         { "modifiers": [], "keycode": 0 }
       ]
     }
@@ -41,6 +43,10 @@ banco relacional — ver design de 0002). SQLite fica em aberto como evolução 
   salvos antes dessa spec — nesse caso o app assume `"WINDOWS"` na leitura (`DEFAULT_TARGET_OS`), sem
   reescrever nada até o usuário salvar o perfil de novo. **Só existe neste arquivo local — o firmware
   nunca recebe nem armazena este campo.**
+- `profiles[].volume_mixer_app` (opcional, spec `app-launcher-volume-mixer`) — caminho (Windows) ou nome
+  de processo (Mac) do app cujo volume o encoder ajusta enquanto este perfil estiver ativo. Ausente =
+  volume master do sistema. **Só existe neste arquivo local**; no Mac este campo é sempre ignorado no
+  ajuste real (Apple não expõe API pública de volume por processo — ver `volume_control.py`).
 - `profiles[].keys` — um item por tecla física (`MAX_KEYS_PER_PROFILE`, hoje 8), na mesma ordem do
   array `keys` do struct `Profile` do firmware:
   - `modifiers` — lista de zero ou mais de `"CTRL"`, `"SHIFT"`, `"ALT"`, `"GUI"` (nomes legíveis no app;
@@ -51,6 +57,11 @@ banco relacional — ver design de 0002). SQLite fica em aberto como evolução 
     `modifiers`/`keycode` (ex: `"COPY"`, ver `named_actions.py`). Ausente/omitido quando a tecla foi
     mapeada manualmente no editor. Usado só para saber quais teclas re-resolver ao trocar `target_os` —
     **também não vai para o firmware**, é metadado só do app.
+  - `app_path` (opcional, spec `app-launcher-volume-mixer`) — caminho do executável que esta tecla abre.
+    Quando presente, `modifiers`/`keycode` é sempre o combo reservado daquela posição de tecla
+    (`Ctrl+Alt+Shift+F13` a `F20`, ver `app_launcher.py`) — o app residente detecta esse combo via
+    atalho global do SO e abre este app. **Também não vai para o firmware** como conceito — o que chega
+    via `SET_PROFILE` é só o combo reservado, indistinguível de qualquer outro mapeamento manual.
 
 ## Sincronização com o device
 
