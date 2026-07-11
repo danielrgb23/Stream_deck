@@ -34,3 +34,23 @@ VERSION -> b'\x01\x04\x04\x00\x00\x01\x00\x01'
 
 Alternativa via `screen`/`PuTTY`: útil só para confirmar que o device está vivo e ecoando alguma coisa
 (por exemplo, a linha de boot impressa em `setup()`), não para montar o pacote binário do protocolo.
+
+## Validado em hardware real (2026-07-11)
+
+Testado com o `DeviceClient` de `desktop-app/` (equivalente ao script acima, via API) contra um ESP32
+genérico (CH340, board `esp32dev`) rodando o firmware `essential`:
+
+```
+ping: True
+version: ('0.1.0', 1)
+active profile: (0, 'Profile 0')
+```
+
+`SET_PROFILE`/`GET_PROFILE` também validados: perfil gravado via `SET_PROFILE` foi lido de volta
+corretamente via `GET_PROFILE`, inclusive após a reconexão da porta serial (que reseta o ESP32) — confirma
+que a escrita no NVS persiste através de reboot, não só na cache RAM.
+
+Nota: o flash inicial falhou repetidamente ("chip stopped responding" parcialmente pela escrita da
+imagem principal) enquanto o adaptador CH340 estava atrás de um hub USB — conectar direto numa porta do
+Mac resolveu. Se `pio run -t upload` falhar de forma consistente e variável (ponto de falha diferente a
+cada tentativa, escritas pequenas sempre OK), suspeite do hub/cabo antes de mexer em baud rate.
