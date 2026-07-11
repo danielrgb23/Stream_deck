@@ -36,5 +36,4 @@ private:
 
     void resolveKey(uint8_t logicalId, bool pressed);
     void switchToNextProfile();
-    void switchToPreviousProfile();
 };

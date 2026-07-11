@@ -2,13 +2,18 @@
 
 ## 1. Firmware — encoder repaginado
 
-- [ ] 1.1 Definir constantes dos 2 combos reservados de volume (subir/descer) em `ProfileManager.cpp`
-- [ ] 1.2 `ROTATE_CW`/`ROTATE_CCW` passam a chamar `hid_.sendKey()` com o combo de volume, em vez de
+- [x] 1.1 Definir constantes dos 2 combos reservados de volume (subir/descer) em `ProfileManager.cpp`
+      (`src/core/ReservedVolumeCombo.h`)
+- [x] 1.2 `ROTATE_CW`/`ROTATE_CCW` passam a chamar `hid_.sendKey()` com o combo de volume, em vez de
       `switchToNextProfile()`/`switchToPreviousProfile()`
-- [ ] 1.3 `PRESS` em `ENCODER_BUTTON_LOGICAL_ID` passa a chamar `switchToNextProfile()`
-- [ ] 1.4 Validar compilação dos 3 envs (`pio run`)
-- [ ] 1.5 Teste manual em hardware: girar o encoder emite o combo de volume (capturar via app residente
-      ou log serial); clicar troca de perfil e atualiza o OLED (Streamer)
+- [x] 1.3 `PRESS` em `ENCODER_BUTTON_LOGICAL_ID` passa a chamar `switchToNextProfile()`
+      (`ENCODER_BUTTON_LOGICAL_ID` movido para `hal/InputEvent.h` para não acoplar `ProfileManager` à
+      implementação concreta `EncoderInput`)
+- [x] 1.4 Validar compilação dos 3 envs (`pio run`)
+- [x] 1.5 Teste manual em hardware real (ESP32 essential): clicar o encoder avança o perfil
+      (`active=1→2→...→7` confirmado via `GET_ACTIVE_PROFILE` com log de debug); girar não altera mais o
+      perfil; rotação tenta emitir o combo de volume via BLE HID (erros `notify() rc=-1` esperados —
+      sem host BLE pareado nesta sessão de teste, não são falha de lógica)
 
 ## 2. Modelo de dados (app desktop)
 

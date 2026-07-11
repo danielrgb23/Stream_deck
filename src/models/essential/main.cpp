@@ -1,6 +1,7 @@
 #include <Arduino.h>
 #include "core/DeviceModel.h"
 #include "core/ProfileManager.h"
+#include "core/ProfileStore.h"
 #include "core/SerialProtocol.h"
 #include "core/Version.h"
 #include "core/hid/ble/BleHidTransport.h"
@@ -64,6 +65,9 @@ void loop() {
         Serial.printf("[input] logicalId=%u type=%s\n", event.logicalId, eventTypeName(event.type));
 #endif
         profileManager.handleEvent(event);
+#if DEBUG_LOG_INPUT_EVENTS
+        Serial.printf("[profile] active=%u\n", ProfileStore::getActiveProfileId());
+#endif
     }
 
 #if DEBUG_LOG_INPUT_EVENTS
