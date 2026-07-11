@@ -49,9 +49,17 @@
 
 ## 5. App residente (bandeja do sistema)
 
-- [ ] 5.1 Ícone de bandeja (`QSystemTrayIcon`) com menu "Abrir"/"Sair"
-- [ ] 5.2 Fechar a janela principal esconde em vez de encerrar o processo; só "Sair" encerra de verdade
-- [ ] 5.3 Timer periódico (`DeviceWorker`) chamando `GET_ACTIVE_PROFILE` para saber o perfil ativo atual
+- [x] 5.1 Ícone de bandeja (`QSystemTrayIcon`) com menu "Abrir"/"Sair" — ícone gerado em runtime (sem
+      asset externo)
+- [x] 5.2 Fechar a janela principal esconde em vez de encerrar o processo; só "Sair" encerra de verdade
+      (`_quit_application`, com `app.setQuitOnLastWindowClosed(False)` em `app.py`)
+- [x] 5.3 Timer periódico (`QTimer`, 1s) chamando `GET_ACTIVE_PROFILE` (via `DeviceWorker.load_active_profile`,
+      já existente) para saber o perfil ativo atual (`known_active_profile_id`)
+
+Verificado headless: `closeEvent` esconde em vez de destruir a janela (`isVisible=False`,
+`isHidden=True`), `_quit_application()` roda sem erro. Sandbox não tem sessão gráfica real
+(`QSystemTrayIcon.isSystemTrayAvailable() == False` no ambiente offscreen) — o ícone visível na bandeja
+precisa ser confirmado rodando o app de verdade.
 
 ## 6. Listener de atalho global + dispatch de ação
 
