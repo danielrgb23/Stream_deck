@@ -85,11 +85,19 @@ precisa ser confirmado rodando o app de verdade.
 
 ## 8. Validação
 
-- [ ] 8.1 Teste: arrastar app para tecla → `app_path` + combo reservado corretos gravados no perfil local
-- [ ] 8.2 Teste: arrastar app para perfil → `volume_mixer_app` gravado
-- [ ] 8.3 Teste: fechar janela principal não derruba a conexão serial nem o listener de atalho global
-- [ ] 8.4 Teste (Windows): girar o encoder com app de volume rodando ajusta só aquele processo
-- [ ] 8.5 Teste (Windows): girar o encoder com app de volume vinculado mas fechado cai no master
-- [ ] 8.6 Teste (Mac): girar o encoder sempre ajusta o master, UI indica a limitação
-- [ ] 8.7 Confirmar que perfis salvos antes desta spec (sem `app_path`/`volume_mixer_app`) continuam
-      carregando normalmente
+- [x] 8.1 Teste: arrastar app para tecla → `app_path` + combo reservado corretos gravados no perfil local
+- [x] 8.2 Teste: arrastar app para perfil → `volume_mixer_app` gravado
+- [x] 8.3 Teste: fechar janela principal não derruba a conexão serial nem o listener de atalho global —
+      confirmado headless: `_worker_thread.isRunning()` e listener seguem ativos após `close()`, só
+      `_quit_application()` os encerra
+- [ ] 8.4 Teste (Windows): girar o encoder com app de volume rodando ajusta só aquele processo — **não
+      testável neste ambiente** (sem Windows disponível); lógica revisada em `volume_control.py`
+- [ ] 8.5 Teste (Windows): girar o encoder com app de volume vinculado mas fechado cai no master —
+      mesma limitação de 8.4
+- [x] 8.6 Teste (Mac): girar o encoder sempre ajusta o master, UI indica a limitação — testado ao vivo
+      neste Mac (100%→95%→90%→100%) e aviso confirmado presente na UI
+- [x] 8.7 Confirmar que perfis salvos antes desta spec (sem `app_path`/`volume_mixer_app`) continuam
+      carregando normalmente — coberto por teste automatizado
+
+Regressão completa: todos os testes automatizados desta sessão (protocolo, profile_store, presets,
+keycodes, editor UI, target-os-shortcuts) re-executados após as mudanças desta spec — todos passando.

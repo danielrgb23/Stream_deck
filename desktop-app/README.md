@@ -1,7 +1,8 @@
 # Xeeta Streamer — App Desktop
 
-App desktop (specs `feature-desktop-app-sync`, `feature-software-presets` e `target-os-shortcuts`) para
-configurar o mapeamento de teclas do device via USB-serial, sem precisar recompilar o firmware.
+App desktop (specs `feature-desktop-app-sync`, `feature-software-presets`, `target-os-shortcuts` e
+`app-launcher-volume-mixer`) para configurar o mapeamento de teclas do device via USB-serial, sem
+precisar recompilar o firmware.
 
 Referência arquitetural: MacroTouch (comunicação serial em tempo real, sistema de perfis) — adaptado
 aqui para representar tecla física em vez de posição de touchscreen. Não é um fork; o protocolo e o
@@ -30,8 +31,13 @@ desktop-app/
 │   ├── presets.py         # carrega pacotes de preset (spec feature-software-presets)
 │   ├── keycodes.py        # tabela de keycodes (convenção Arduino Keyboard)
 │   ├── named_actions.py   # ações multiplataforma (Copiar/Colar/etc, spec target-os-shortcuts)
-│   ├── editor_widget.py   # widget de edição de perfil (nome + SO-alvo + 8 teclas)
-│   ├── main_window.py     # janela principal (conexão + seletor de perfil + editor + import de preset)
+│   ├── app_launcher.py    # combos HID reservados por posição de tecla (spec app-launcher-volume-mixer)
+│   ├── installed_apps.py  # lista/abre apps instalados (Menu Iniciar no Windows, /Applications no Mac)
+│   ├── installed_apps_panel.py  # painel arrastável de apps instalados
+│   ├── hotkey_listener.py # atalho global do SO (pynput) para os combos reservados
+│   ├── volume_control.py  # volume por processo (Windows/pycaw) ou master (Mac/osascript)
+│   ├── editor_widget.py   # widget de edição de perfil (nome + SO-alvo + app de volume + 8 teclas)
+│   ├── main_window.py     # janela principal + bandeja do sistema (conexão, perfil, editor, presets)
 │   └── app.py             # entry point
 └── presets/                # pacotes de preset (JSON), um arquivo por pacote
     ├── obs.json
@@ -73,6 +79,28 @@ Isso é só uma conveniência do editor: o que chega ao device via `SET_PROFILE`
 `modifiers`/`keycode` já resolvidos, igual a um mapeamento manual — o firmware não sabe nem precisa
 saber que uma tecla veio de uma ação nomeada.
 
+## Abrir app e volume por app (encoder repaginado)
+
+Arraste um app instalado (painel à direita do editor) para uma tecla → aquela tecla passa a abrir esse
+app; arraste para a área de "app de volume" do perfil → o encoder passa a controlar o volume desse app
+enquanto o perfil estiver ativo. O encoder agora funciona assim: **rotação = volume, clique = troca de
+perfil** (antes era o contrário).
+
+Mecanismo: cada tecla/direção usa um combo de teclado reservado e raro (`Ctrl+Alt+Shift+F13..F20` para
+teclas, `Ctrl+Alt+Shift+Seta cima/baixo` para volume) que o firmware emite via HID normalmente — o app
+residente escuta esses combos como **atalho global do sistema operacional** (`pynput`,
+`hotkey_listener.py`) e executa a ação de verdade localmente. Nenhuma mudança no protocolo serial.
+
+No Mac, monitorar teclado globalmente exige permissão de Acessibilidade (System Settings → Privacy &
+Security → Accessibility) para o processo Python/app — sem isso, os atalhos reservados não disparam
+(atalhos digitados manualmente continuam funcionando normalmente, já que não dependem disso).
+
+Volume por processo é real no Windows (Core Audio via `pycaw`); no Mac, a Apple não expõe API pública
+equivalente — o ajuste sempre cai no volume master do sistema (aviso fixo na UI quando rodando no Mac).
+
+O app continua rodando na bandeja do sistema ao fechar a janela principal — a conexão com o device e o
+listener de atalho global seguem ativos. Use "Sair" no menu da bandeja para encerrar de verdade.
+
 ## Limitações desta fase
 
 - App testado localmente até a construção da janela (`QT_QPA_PLATFORM=offscreen`); a detecção/sincronização
@@ -80,3 +108,7 @@ saber que uma tecla veio de uma ação nomeada.
   `docs/serial-protocol-manual-test.md`.
 - Upload de ícone (`UPLOAD_ICON`, mencionado no proposal de `serial-protocol`) não está implementado —
   nenhum modelo atual tem tela por tecla.
+- Sem ícones para os apps instalados (só nome + caminho) — melhoria futura, não bloqueia a feature.
+- Volume por processo no Windows foi implementado e revisado, mas não testado em hardware Windows real
+  (sem máquina disponível neste ambiente de desenvolvimento); o caminho Mac (`osascript`, volume master)
+  foi testado ao vivo com sucesso.

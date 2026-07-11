@@ -184,3 +184,16 @@ O canal de configuração serial (`SerialProtocol`) continua sempre em USB-seria
 > do ESP32 clássico (~87-89% no build atual, sem nenhuma feature de produto ainda). Ao adicionar as
 > features (0006+), vale monitorar o uso de flash do Essential/Streamer e considerar uma partition table
 > customizada se necessário.
+
+#### Encoder: rotação = volume, clique = troca de perfil (spec `app-launcher-volume-mixer`)
+
+Papéis trocados em relação à fundação original: antes a rotação trocava de perfil e o clique não tinha
+ação; agora `ROTATE_CW`/`ROTATE_CCW` emitem um combo HID reservado e fixo
+(`Ctrl+Alt+Shift+Seta cima/baixo`, `src/core/ReservedVolumeCombo.h`) que o app desktop residente
+intercepta como atalho global do SO para ajustar volume; o `PRESS` do botão do encoder
+(`ENCODER_BUTTON_LOGICAL_ID`) agora chama `switchToNextProfile()`. Nenhuma mudança no protocolo serial —
+o combo de volume é só mais um valor de `KeyEvent` emitido via `HidTransport`, como qualquer tecla.
+
+Da mesma forma, cada tecla física tem um combo reservado próprio (`Ctrl+Alt+Shift+F13..F20`) usado só
+quando o app desktop configura aquela tecla como "abrir app" — ver `desktop-app/README.md` para o
+mecanismo completo (app residente + `pynput` + `pycaw`/`osascript`).
