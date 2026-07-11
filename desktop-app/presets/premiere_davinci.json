@@ -1,0 +1,15 @@
+{
+  "name": "Premiere/DaVinci",
+  "target_software": "Adobe Premiere Pro / DaVinci Resolve",
+  "notes": "Atalhos padrão de edição, compatíveis com Premiere e DaVinci sem precisar remapear nada nos dois apps.",
+  "keys": [
+    { "modifiers": [], "keycode": 105, "label": "Marcar entrada (I)" },
+    { "modifiers": [], "keycode": 111, "label": "Marcar saída (O)" },
+    { "modifiers": [], "keycode": 99, "label": "Cortar / Razor (C)" },
+    { "modifiers": [], "keycode": 32, "label": "Play/Pause (Espaço)" },
+    { "modifiers": ["CTRL"], "keycode": 122, "label": "Desfazer (Ctrl+Z)" },
+    { "modifiers": ["CTRL", "SHIFT"], "keycode": 122, "label": "Refazer (Ctrl+Shift+Z)" },
+    { "modifiers": ["CTRL"], "keycode": 115, "label": "Salvar projeto (Ctrl+S)" },
+    { "modifiers": ["CTRL"], "keycode": 109, "label": "Exportar mídia (Ctrl+M)" }
+  ]
+}

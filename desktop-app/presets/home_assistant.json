@@ -1,0 +1,15 @@
+{
+  "name": "Home Assistant",
+  "target_software": "Home Assistant (dashboard no navegador)",
+  "notes": "Assume o dashboard do Home Assistant aberto em abas fixas do navegador (Ctrl+1, Ctrl+2, ...). Ajuste a ordem das abas para bater com seus cômodos.",
+  "keys": [
+    { "modifiers": ["CTRL"], "keycode": 49, "label": "Aba 1 - ex: Sala (Ctrl+1)" },
+    { "modifiers": ["CTRL"], "keycode": 50, "label": "Aba 2 - ex: Cozinha (Ctrl+2)" },
+    { "modifiers": ["CTRL"], "keycode": 51, "label": "Aba 3 - ex: Quarto (Ctrl+3)" },
+    { "modifiers": [], "keycode": 198, "label": "Atualizar página (F5)" },
+    { "modifiers": [], "keycode": 204, "label": "Tela cheia (F11)" },
+    { "modifiers": [], "keycode": 0, "label": "" },
+    { "modifiers": [], "keycode": 0, "label": "" },
+    { "modifiers": [], "keycode": 0, "label": "" }
+  ]
+}

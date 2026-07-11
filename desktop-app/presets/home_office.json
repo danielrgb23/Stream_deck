@@ -1,0 +1,15 @@
+{
+  "name": "Home Office",
+  "target_software": "Zoom / Microsoft Teams / Slack",
+  "notes": "Zoom e Teams: confirme se os atalhos globais estão habilitados nas configurações de cada app (em geral vêm habilitados por padrão no Windows).",
+  "keys": [
+    { "modifiers": ["ALT"], "keycode": 97, "label": "Zoom: mutar/desmutar (Alt+A)" },
+    { "modifiers": ["ALT"], "keycode": 118, "label": "Zoom: câmera on/off (Alt+V)" },
+    { "modifiers": ["CTRL", "SHIFT"], "keycode": 109, "label": "Teams: mutar/desmutar (Ctrl+Shift+M)" },
+    { "modifiers": ["CTRL", "SHIFT"], "keycode": 111, "label": "Teams: câmera on/off (Ctrl+Shift+O)" },
+    { "modifiers": ["CTRL"], "keycode": 107, "label": "Slack: busca rápida (Ctrl+K)" },
+    { "modifiers": ["CTRL", "SHIFT"], "keycode": 97, "label": "Slack: marcar tudo como lido (Ctrl+Shift+A)" },
+    { "modifiers": [], "keycode": 0, "label": "" },
+    { "modifiers": [], "keycode": 0, "label": "" }
+  ]
+}

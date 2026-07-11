@@ -1,24 +1,24 @@
-# Xeeta Streamer — OpenSpec: Roadmap Completo
+# Xeeta Streamer
 
-Este pacote contém 9 changes no formato OpenSpec: 5 de fundação (implementar primeiro, nesta ordem) e
-4 de feature (esqueletadas, bloqueadas até a fundação estar pronta).
+Firmware (PlatformIO/ESP32, um core para os três modelos Essential/Streamer/Creator Pro) + app desktop
+(Python/PyQt6) para um macro pad configurável, no formato de plano OpenSpec: 5 changes de fundação e 4
+de feature. **As 9 changes já foram implementadas e arquivadas** — `openspec/specs/` contém as specs
+ativas resultantes; `openspec/changes/archive/` tem o histórico de cada change.
+
+- Firmware: ver seções abaixo (build, protocolo serial, HAL, `ProfileManager`/`HidTransport`).
+- App desktop: ver `desktop-app/README.md`.
+- Presets prontos (OBS, Premiere/DaVinci, Home Office, Home Assistant): `desktop-app/presets/`.
 
 ## Estrutura
 
 ```
 openspec/
-├── specs/                                  # Specs ATIVAS (vazio até changes serem arquivadas)
+├── specs/                                  # Specs ativas (uma por capability, promovidas na archive)
 └── changes/
-    ├── archive/                            # Vazio por enquanto
-    ├── 0001-build-scaffolding/              # Fundação
-    ├── 0002-persistence-schema/             # Fundação — depende de 0001
-    ├── 0003-serial-protocol/                # Fundação — depende de 0001
-    ├── 0004-hal-interfaces/                 # Fundação — depende de 0001
-    ├── 0005-profile-core/                   # Fundação — depende de 0002, 0003, 0004 (fecha a base)
-    ├── 0006-feature-button-mapping/         # Feature — depende de 0002, 0003, 0004, 0005
-    ├── 0007-feature-oled-status-display/    # Feature — depende de 0004, 0005
-    ├── 0008-feature-desktop-app-sync/       # Feature — depende de 0002, 0003, 0005
-    └── 0009-feature-software-presets/       # Feature — depende de 0006, 0008
+    └── archive/                            # Histórico de cada change já implementada
+src/                                        # Firmware (ver seção "Firmware — build")
+desktop-app/                                # App desktop (ver desktop-app/README.md)
+docs/                                       # Contratos de dados e procedimentos de teste manual
 ```
 
 ## Ordem de implementação

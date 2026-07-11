@@ -1,0 +1,15 @@
+{
+  "name": "OBS Studio",
+  "target_software": "OBS Studio",
+  "notes": "As teclas F13-F20 raramente colidem com atalhos de outros apps. Vincule cada uma em OBS > Configurações > Atalhos, na ação correspondente.",
+  "keys": [
+    { "modifiers": [], "keycode": 240, "label": "Cortar cena (F13)" },
+    { "modifiers": [], "keycode": 241, "label": "Mutar microfone (F14)" },
+    { "modifiers": [], "keycode": 242, "label": "Iniciar/parar gravação (F15)" },
+    { "modifiers": [], "keycode": 243, "label": "Iniciar/parar transmissão (F16)" },
+    { "modifiers": [], "keycode": 244, "label": "Cena 1 (F17)" },
+    { "modifiers": [], "keycode": 245, "label": "Cena 2 (F18)" },
+    { "modifiers": [], "keycode": 246, "label": "Cena 3 (F19)" },
+    { "modifiers": [], "keycode": 247, "label": "Replay buffer (F20)" }
+  ]
+}

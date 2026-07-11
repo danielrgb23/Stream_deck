@@ -2,6 +2,9 @@
 .vscode/
 .DS_Store
 .claude/
+desktop-app/.venv/
+__pycache__/
+*.pyc
 
 # Repositorios de referencia (Sparkpad-Arduino, MacroTouch) — clonados como
 # material de leitura, nunca fazem parte deste repositorio (ver README.md).
