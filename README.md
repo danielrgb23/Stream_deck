@@ -1,14 +1,5 @@
 # Xeeta Streamer
 
-Firmware (PlatformIO/ESP32, um core para os três modelos Essential/Streamer/Creator Pro) + app desktop
-(Python/PyQt6) para um macro pad configurável, no formato de plano OpenSpec: 5 changes de fundação e 4
-de feature. **As 9 changes já foram implementadas e arquivadas** — `openspec/specs/` contém as specs
-ativas resultantes; `openspec/changes/archive/` tem o histórico de cada change.
-
-- Firmware: ver seções abaixo (build, protocolo serial, HAL, `ProfileManager`/`HidTransport`).
-- App desktop: ver `desktop-app/README.md`.
-- Presets prontos (OBS, Premiere/DaVinci, Home Office, Home Assistant): `desktop-app/presets/`.
-
 ## Estrutura
 
 ```
