@@ -1,0 +1,127 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1100 640" font-family="Helvetica, Arial, sans-serif">
+  <rect x="0" y="0" width="1100" height="640" fill="#ffffff"/>
+
+  <!-- Title -->
+  <text x="550" y="30" text-anchor="middle" font-size="20" font-weight="bold" fill="#1a1a1a">
+    Xeeta Streamer — Essential: pinout validado (5 botões + encoder)
+  </text>
+
+  <!-- ESP32 board -->
+  <rect x="400" y="80" width="200" height="480" rx="10" fill="#1f6f4f" stroke="#123d2b" stroke-width="2"/>
+  <text x="500" y="115" text-anchor="middle" font-size="15" font-weight="bold" fill="#ffffff">ESP32</text>
+  <text x="500" y="135" text-anchor="middle" font-size="12" fill="#dff2e8">WROOM-32</text>
+  <rect x="470" y="280" width="60" height="90" rx="4" fill="#c0c0c0" stroke="#8a8a8a"/>
+  <text x="500" y="330" text-anchor="middle" font-size="10" fill="#333" transform="rotate(-90 500 330)">USB</text>
+
+  <!-- Left pin stubs: GPIO4, GPIO5, GPIO13, GPIO14, GPIO16, GND -->
+  <g stroke="#333" stroke-width="2">
+    <line x1="340" y1="160" x2="400" y2="160"/>
+    <line x1="340" y1="210" x2="400" y2="210"/>
+    <line x1="340" y1="260" x2="400" y2="260"/>
+    <line x1="340" y1="310" x2="400" y2="310"/>
+    <line x1="340" y1="360" x2="400" y2="360"/>
+    <line x1="340" y1="430" x2="400" y2="430"/>
+  </g>
+  <g fill="#1a1a1a" font-size="13" text-anchor="end">
+    <text x="335" y="155">GPIO4</text>
+    <text x="335" y="205">GPIO5</text>
+    <text x="335" y="255">GPIO13</text>
+    <text x="335" y="305">GPIO14</text>
+    <text x="335" y="355">GPIO16</text>
+    <text x="335" y="425">GND</text>
+  </g>
+  <g fill="#1a1a1a">
+    <circle cx="340" cy="160" r="4"/>
+    <circle cx="340" cy="210" r="4"/>
+    <circle cx="340" cy="260" r="4"/>
+    <circle cx="340" cy="310" r="4"/>
+    <circle cx="340" cy="360" r="4"/>
+    <circle cx="340" cy="430" r="4"/>
+  </g>
+
+  <!-- ===== 5 push buttons on far left ===== -->
+  <line x1="90" y1="140" x2="90" y2="470" stroke="#000000" stroke-width="3"/>
+  <text x="60" y="130" font-size="12" fill="#000000">GND rail</text>
+
+  <g>
+    <rect x="180" y="145" width="50" height="30" rx="4" fill="#f2c14e" stroke="#8a6d1a" stroke-width="2"/>
+    <text x="205" y="165" text-anchor="middle" font-size="12" fill="#3a2c00">B1</text>
+    <line x1="90" y1="160" x2="180" y2="160" stroke="#000000" stroke-width="2"/>
+    <line x1="230" y1="160" x2="340" y2="160" stroke="#d9822b" stroke-width="2.5"/>
+  </g>
+  <g>
+    <rect x="180" y="195" width="50" height="30" rx="4" fill="#f2c14e" stroke="#8a6d1a" stroke-width="2"/>
+    <text x="205" y="215" text-anchor="middle" font-size="12" fill="#3a2c00">B2</text>
+    <line x1="90" y1="210" x2="180" y2="210" stroke="#000000" stroke-width="2"/>
+    <line x1="230" y1="210" x2="340" y2="210" stroke="#d9822b" stroke-width="2.5"/>
+  </g>
+  <g>
+    <rect x="180" y="245" width="50" height="30" rx="4" fill="#f2c14e" stroke="#8a6d1a" stroke-width="2"/>
+    <text x="205" y="265" text-anchor="middle" font-size="12" fill="#3a2c00">B3</text>
+    <line x1="90" y1="260" x2="180" y2="260" stroke="#000000" stroke-width="2"/>
+    <line x1="230" y1="260" x2="340" y2="260" stroke="#d9822b" stroke-width="2.5"/>
+  </g>
+  <g>
+    <rect x="180" y="295" width="50" height="30" rx="4" fill="#f2c14e" stroke="#8a6d1a" stroke-width="2"/>
+    <text x="205" y="315" text-anchor="middle" font-size="12" fill="#3a2c00">B4</text>
+    <line x1="90" y1="310" x2="180" y2="310" stroke="#000000" stroke-width="2"/>
+    <line x1="230" y1="310" x2="340" y2="310" stroke="#d9822b" stroke-width="2.5"/>
+  </g>
+  <g>
+    <rect x="180" y="345" width="50" height="30" rx="4" fill="#f2c14e" stroke="#8a6d1a" stroke-width="2"/>
+    <text x="205" y="365" text-anchor="middle" font-size="12" fill="#3a2c00">B5</text>
+    <line x1="90" y1="360" x2="180" y2="360" stroke="#000000" stroke-width="2"/>
+    <line x1="230" y1="360" x2="340" y2="360" stroke="#d9822b" stroke-width="2.5"/>
+  </g>
+
+  <!-- GND rail down to board GND pin -->
+  <path d="M 90 430 L 200 430 L 200 470 L 90 470" fill="none" stroke="#000000" stroke-width="3"/>
+  <line x1="200" y1="430" x2="340" y2="430" stroke="#000000" stroke-width="2.5"/>
+
+  <text x="90" y="480" font-size="12" fill="#333">Cada botão: um terminal no GPIO, outro na malha GND</text>
+  <text x="90" y="497" font-size="12" fill="#333">comum (pull-up interno habilitado em software, sem</text>
+  <text x="90" y="514" font-size="12" fill="#333">resistor externo — pressionado = LOW).</text>
+
+  <!-- ===== Right side: ESP32 -> encoder rotativo ===== -->
+  <!-- board-side pin dots + labels -->
+  <g fill="#1a1a1a">
+    <circle cx="600" cy="180" r="4"/>
+    <circle cx="600" cy="230" r="4"/>
+    <circle cx="600" cy="280" r="4"/>
+    <circle cx="600" cy="330" r="4"/>
+  </g>
+  <g fill="#1a1a1a" font-size="13" text-anchor="start">
+    <text x="608" y="175">GPIO21</text>
+    <text x="608" y="225">GPIO22</text>
+    <text x="608" y="275">GPIO25</text>
+    <text x="608" y="325">GND</text>
+  </g>
+
+  <!-- colored wires from ESP32 pins to encoder module -->
+  <line x1="600" y1="180" x2="850" y2="180" stroke="#2e7d32" stroke-width="2.5"/>
+  <line x1="600" y1="230" x2="850" y2="230" stroke="#6a1b9a" stroke-width="2.5"/>
+  <line x1="600" y1="280" x2="850" y2="280" stroke="#c62828" stroke-width="2.5"/>
+  <line x1="600" y1="330" x2="850" y2="330" stroke="#000000" stroke-width="2.5"/>
+
+  <!-- encoder-side pin labels (component pin names, not GPIOs) -->
+  <g fill="#1a1a1a" font-size="12" text-anchor="end">
+    <text x="843" y="175">CLK</text>
+    <text x="843" y="225">DT</text>
+    <text x="843" y="275">SW</text>
+    <text x="843" y="325">GND</text>
+  </g>
+
+  <!-- encoder module box -->
+  <rect x="850" y="150" width="150" height="210" rx="8" fill="#7aa6d9" stroke="#2d5686" stroke-width="2"/>
+  <text x="925" y="130" text-anchor="middle" font-size="13" font-weight="bold" fill="#1a1a1a">Encoder rotativo</text>
+  <text x="925" y="270" text-anchor="middle" font-size="12" fill="#0a2540">(quadratura</text>
+  <text x="925" y="286" text-anchor="middle" font-size="12" fill="#0a2540">+ botão push)</text>
+
+  <!-- Footer note -->
+  <text x="550" y="600" text-anchor="middle" font-size="12" fill="#555">
+    Fonte: src/models/essential/main.cpp (BUTTON_PINS, ENCODER_PIN_CLK/DT/SW) — ver README, seção "Pinout validado".
+  </text>
+  <text x="550" y="620" text-anchor="middle" font-size="11" fill="#888">
+    Diagrama esquemático (não é layout físico de protoboard) — todos os pinos usam INPUT_PULLUP interno do ESP32.
+  </text>
+</svg>

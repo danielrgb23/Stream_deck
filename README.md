@@ -1,5 +1,41 @@
 # Xeeta Streamer
 
+Macro pad físico configurável (ESP32) + app desktop companion (Python/PyQt6), com firmware compartilhado
+para três modelos de hardware distintos e um protocolo serial próprio para configuração e emulação HID.
+Projeto pessoal, do design da arquitetura de firmware até o app desktop, empacotamento de instalador e
+integrações com o SO (volume por processo, atalhos globais, controle de apps).
+
+**Stack:** C++ (PlatformIO/Arduino, ESP32) · Python 3 / PyQt6 · protocolo binário sobre USB-serial ·
+BLE HID e USB HID · `pynput`/`pycaw`/`osascript` para integração com o SO · PyInstaller para
+empacotamento.
+
+## Destaques técnicos
+
+- **Um core de firmware, três modelos de hardware** (Essential, Streamer, Creator Pro) — camada HAL
+  (`InputSource`/`DisplayDriver`/`HidTransport`) isola o core de qualquer detalhe concreto de hardware,
+  no mesmo princípio usado por firmwares de teclado como o QMK. Cada modelo só linka o que usa (o
+  `build_src_filter` do PlatformIO exclui HAL/transporte HID que não pertencem àquele `env`).
+- **Protocolo serial binário próprio** (`[version][command][length][payload]`) para configuração de
+  perfis e leitura de estado do device, independente do transporte usado para emular teclado (USB ou
+  BLE).
+- **Persistência de perfis on-device** (NVS do ESP32) com schema versionado e sincronização bidirecional
+  com o app desktop.
+- **App desktop residente** que escuta atalhos globais reservados vindos do device (via `pynput`) e
+  traduz em ações reais do SO: volume por processo (`pycaw`/`osascript`) e abertura de aplicativos —
+  com editor de perfis e presets prontos (OBS, Premiere/DaVinci, Home Office, Home Assistant).
+- **Empacotado como executável nativo** (PyInstaller) para Mac (`.app`) e Windows (`.exe`), sem exigir
+  Python instalado no ambiente do usuário final.
+- Desenvolvido seguindo um plano estruturado em specs (formato OpenSpec): 5 changes de fundação + 4 de
+  feature, todas implementadas e arquivadas — `openspec/specs/` tem as specs ativas resultantes,
+  `openspec/changes/archive/` o histórico de cada change.
+
+## Onde olhar
+
+- Firmware: seções abaixo (build, protocolo serial, HAL, `ProfileManager`/`HidTransport`).
+- App desktop: `desktop-app/README.md`.
+- Presets prontos (OBS, Premiere/DaVinci, Home Office, Home Assistant): `desktop-app/presets/`.
+- Diagrama de ligação do protótipo Essential (5 botões + encoder): [`docs/essential-wiring.md`](docs/essential-wiring.md).
+
 ## Estrutura
 
 ```
@@ -176,6 +212,11 @@ Testado ponta a ponta em hardware real: os 5 botões, a rotação do encoder (`R
 clique do encoder (id lógico reservado `ENCODER_BUTTON_LOGICAL_ID = 0xFE`) disparam eventos distintos.
 Ver `src/models/essential/main.cpp` — tem um flag `DEBUG_LOG_INPUT_EVENTS` (desligado por padrão) que
 liga log de cada `InputEvent` + dump periódico do estado cru de cada pino, útil pra depurar fiação nova.
+
+Diagrama de ligação (gerado a partir desse pinout, sem resistor externo — pull-up interno do ESP32) e
+passo a passo de montagem na protoboard: [`docs/essential-wiring.md`](docs/essential-wiring.md).
+
+![Diagrama de ligação do Essential](docs/images/essential-wiring.svg)
 
 ### ProfileManager e HidTransport
 
